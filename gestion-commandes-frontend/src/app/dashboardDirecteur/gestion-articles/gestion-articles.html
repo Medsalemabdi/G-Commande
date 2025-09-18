@@ -1,0 +1,88 @@
+<div class="p-4">
+  
+
+  <!-- Add new article -->
+  <div class="mb-4 flex space-x-2">
+    <input [(ngModel)]="newArticle.nom" placeholder="Nom de l'article"
+           class="border rounded px-2 py-1 w-64" />
+    <input [(ngModel)]="newArticle.description" placeholder="description de l'article"
+           class="border rounded px-2 py-1 w-64" />
+    <select [(ngModel)]="newArticle.categorie_id"
+            class="border rounded px-2 py-1 w-48">
+      <option [value]="0" disabled>-- Choisir une catégorie --</option>
+      <option *ngFor="let cat of categories" [value]="cat.id">
+        {{ cat.nom }}
+      </option>
+    </select>
+    <button (click)="addArticle()" class="bg-green-600 text-white px-4 py-1 rounded">
+      Ajouter
+    </button>
+  </div>
+
+  <!-- Articles list -->
+  <table class="w-full border-collapse border border-gray-300">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="border px-4 py-2">ID</th>
+        <th class="border px-4 py-2">Nom</th>
+        <th class="border px-4 py-2">Description</th>
+        <th class="border px-4 py-2">Catégorie</th>
+        <th class="border px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let article of articles">
+        <td class="border px-4 py-2">{{ article.id }}</td>
+        <td class="border px-4 py-2">
+          <ng-container *ngIf="editingArticle?.id !== article.id; else editNom">
+            {{ article.nom }}
+          </ng-container>
+          <ng-template #editNom>
+            <input [(ngModel)]="editingArticle!.nom"
+                   class="border rounded px-2 py-1 w-full" />
+          </ng-template>
+        </td>
+        <td class="border px-4 py-2">
+          <ng-container *ngIf="editingArticle?.id !== article.id; else editDescription">
+            {{ article.description }}
+          </ng-container>
+          <ng-template #editDescription>
+            <input [(ngModel)]="editingArticle!.description"
+                   class="border rounded px-2 py-1 w-full" />
+          </ng-template>
+        </td>
+        <td class="border px-4 py-2">
+          <!-- Show category name -->
+          <ng-container *ngIf="editingArticle?.id !== article.id">
+            {{ getCategorieName(article.categorie.id) }}
+          </ng-container>
+
+          <!-- Allow choosing new category in edit mode -->
+          <select *ngIf="editingArticle?.id === article.id"
+                  [(ngModel)]="editingArticle!.categorie_id"
+                  class="border rounded px-2 py-1 w-full">
+            <option *ngFor="let cat of categories" [value]="cat.id">
+              {{ cat.nom }}
+            </option>
+          </select>
+        </td>
+        <td class="border px-4 py-2 flex space-x-2">
+          <button *ngIf="editingArticle?.id !== article.id"
+                  (click)="editArticle(article)"
+                  class="bg-blue-600 text-white px-3 py-1 rounded">
+            Modifier
+          </button>
+          <button *ngIf="editingArticle?.id === article.id"
+                  (click)="updateArticle()"
+                  class="bg-green-600 text-white px-3 py-1 rounded">
+            Sauvegarder
+          </button>
+          <button (click)="deleteArticle(article.id!)"
+                  class="bg-red-600 text-white px-3 py-1 rounded">
+            Supprimer
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

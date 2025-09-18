@@ -1,0 +1,93 @@
+/* src/app/auth/signup/signup.component.scss */
+
+/* Center the card in the viewport */
+:host {
+  display: block;
+}
+.signup-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* Card styling */
+.signup-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem 2.5rem;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.signup-card h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  color: #444;
+}
+
+/* Form layout */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+
+  label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  input {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+  }
+
+  small {
+    color: #e53e3e;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #667eea;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: #5a67d8;
+  }
+  &:disabled {
+    background-color: #a3bffa;
+    cursor: not-allowed;
+  }
+}
+
+/* Feedback messages */
+.message {
+  text-align: center;
+  margin-top: 1rem;
+  font-weight: 500;
+  &.success { color: #38a169; }
+  &.error   { color: #e53e3e; }
+}

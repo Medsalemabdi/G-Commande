@@ -1,0 +1,53 @@
+<div class="p-4">
+  
+
+  <!-- Ajouter une catégorie -->
+  <div class="mb-4 flex space-x-2">
+    <input [(ngModel)]="newCategorie.nom"
+           placeholder="Nom de la catégorie"
+           class="border rounded px-2 py-1 w-64" />
+    <button (click)="addCategorie()" class="bg-green-600 text-white px-4 py-1 rounded">
+      Ajouter
+    </button>
+  </div>
+
+  <!-- Liste des catégories -->
+  <table class="w-full border-collapse border border-gray-300">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="border px-4 py-2">ID</th>
+        <th class="border px-4 py-2">Nom</th>
+        <th class="border px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cat of categories">
+        <td class="border px-4 py-2">{{ cat.id }}</td>
+        <td class="border px-4 py-2">
+          <ng-container *ngIf="editingCategorie?.id !== cat.id">
+            {{ cat.nom }}
+          </ng-container>
+          <input *ngIf="editingCategorie?.id === cat.id"
+                 [(ngModel)]="editingCategorie!.nom"
+                 class="border rounded px-2 py-1 w-full" />
+        </td>
+        <td class="border px-4 py-2 flex space-x-2">
+          <button *ngIf="editingCategorie?.id !== cat.id"
+                  (click)="editCategorie(cat)"
+                  class="bg-blue-600 text-white px-3 py-1 rounded">
+            Modifier
+          </button>
+          <button *ngIf="editingCategorie?.id === cat.id"
+                  (click)="updateCategorie()"
+                  class="bg-green-600 text-white px-3 py-1 rounded">
+            Sauvegarder
+          </button>
+          <button (click)="deleteCategorie(cat.id!)"
+                  class="bg-red-600 text-white px-3 py-1 rounded">
+            Supprimer
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

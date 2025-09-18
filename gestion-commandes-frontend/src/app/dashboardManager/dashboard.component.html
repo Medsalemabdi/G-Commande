@@ -1,0 +1,339 @@
+<!-- Tailwind + Angular, sans router : sections contrôlées par activeSection -->
+<div class="bg-gray-100 font-sans min-h-screen" [class.overflow-hidden]="mobileMenuOpen">
+  <div class="flex flex-col md:flex-row min-h-screen">
+    <!-- Sidebar -->
+    <aside
+      class="bg-white shadow-lg transition-all duration-300 ease-in-out fixed md:static inset-y-0 left-0 z-50 w-64 md:w-64"
+      [class.hidden]="!mobileMenuOpen && isMobile">
+      <div class="p-4 flex items-center justify-between border-b">
+        <h1 class="text-xl font-bold text-green-600">G-Commande</h1>
+        <button (click)="toggleMobileMenu()" class="md:hidden p-2 rounded-full hover:bg-gray-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        </button>
+      </div>
+
+      <nav class="py-4">
+        <ul class="space-y-2">
+          <li>
+            <a href="#" (click)="$event.preventDefault(); setSection('dashboard')"
+               class="flex items-center space-x-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors"
+               [ngClass]="{ 'bg-gray-100': activeSection === 'dashboard' }">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0l-2-2m2 2V4a1 1 0 00-1-1h-3a1 1 0 00-1 1z" />
+              </svg>
+              <span class="text-gray-700">Dashboard</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" (click)="$event.preventDefault(); setSection('team')"
+               class="flex items-center space-x-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors"
+               [ngClass]="{ 'bg-gray-100': activeSection === 'team' }">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87m3-6a4 4 0 110-8 4 4 0 010 8z" />
+              </svg>
+              <span class="text-gray-700">Équipe</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" (click)="$event.preventDefault(); setSection('profile')"
+               class="flex items-center space-x-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors"
+               [ngClass]="{ 'bg-gray-100': activeSection === 'profile' }">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span class="text-gray-700">Profil</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 p-4 md:p-6 overflow-y-auto md:ml-0 ml-64" [class.ml-0]="!isMobile">
+      <!-- Top bar mobile -->
+      <div class="md:hidden flex justify-between items-center mb-4">
+        <h1 class="text-xl font-bold text-gray-800">G-Commande</h1>
+        <button (click)="toggleMobileMenu()" class="p-2 rounded-full hover:bg-gray-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Dashboard (synthèse) -->
+      <section *ngIf="activeSection === 'dashboard'" class="space-y-6">
+        <header>
+          <h1 class="text-2xl font-bold text-gray-800">Vue Manager</h1>
+          <p class="text-gray-600">Aperçu des commandes de votre équipe.</p>
+        </header>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="bg-white p-4 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-700">Total gérées</h2>
+            <p class="text-2xl font-bold text-green-600">{{ stats.total }}</p>
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-700">En attente</h2>
+            <p class="text-2xl font-bold text-yellow-600">{{ stats.pending }}</p>
+          </div>
+          <div class="bg-white p-4 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-700">Dernière activité</h2>
+            <p class="text-2xl font-bold text-blue-600" *ngIf="lastOrderDate as d">{{ d | date:'mediumDate' }}</p>
+            <p class="text-gray-500" *ngIf="!lastOrderDate">—</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-semibold text-gray-800 mb-3">États</h2>
+          <div class="flex flex-wrap gap-3">
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-50 text-yellow-700 border border-yellow-200">
+              <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+              En attente
+              <span class="font-semibold">{{ statsByState.en_attente }}</span>
+            </span>
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 text-green-700 border border-green-200">
+              <span class="w-2 h-2 rounded-full bg-green-500"></span>
+              Validée
+              <span class="font-semibold">{{ statsByState.validee }}</span>
+            </span>
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">
+              <span class="w-2 h-2 rounded-full bg-red-500"></span>
+              Rejetée
+              <span class="font-semibold">{{ statsByState.rejetee }}</span>
+            </span>
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+              Reçue
+              <span class="font-semibold">{{ statsByState.recue }}</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-lg font-semibold text-gray-800">Commandes rejetées</h2>
+            <span class="text-sm text-gray-500" *ngIf="rejectedOrders.length === 0">Aucune commande rejetée</span>
+          </div>
+
+          <div *ngIf="rejectedOrders.length > 0" class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Article</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qté</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Motif</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr *ngFor="let r of rejectedOrders">
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">#{{ r.id }}</td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{{ r.date | date:'yyyy-MM-dd' }}</td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{{ r.articleNom }}</td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{{ r.quantite }}</td>
+                  <td class="px-4 py-3 text-sm text-red-700">{{ r.motifRejet || '—' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section Équipe (validation / rejet / édition) -->
+      <section *ngIf="activeSection === 'team'" class="space-y-6">
+        <header class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-800">Commandes de l'équipe</h1>
+            <p class="text-gray-600">Valider, rejeter ou modifier les demandes.</p>
+          </div>
+        </header>
+
+        <div class="bg-white p-4 rounded-lg shadow-md overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur Matricule</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Article</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qté</th>
+                
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">État</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-200" *ngIf="!teamLoading; else teamLoadingTpl">
+              <tr *ngFor="let c of managedCommandes">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">#{{ c.id }}</td>
+
+                <!-- Utilisateur : accès compat via indexer -->
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                  {{ userLabel(c) }}
+                </td>
+
+
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{{ c.date | date:'yyyy-MM-dd' }}</td>
+
+                <!-- Article / Qté : affichage ou édition -->
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                  <ng-container *ngIf="editingTeamId !== c.id; else editArticleTpl">
+                    {{ articleName(c.article_id) }}
+                  </ng-container>
+                </td>
+
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                  <ng-container *ngIf="editingTeamId !== c.id; else editQuantiteTpl">
+                    {{ c.quantite }}
+                  </ng-container>
+                </td>
+
+                
+
+                <td class="px-4 py-3 whitespace-nowrap text-sm" [ngClass]="statusClass(c.etatCommandeId)">
+                  {{ statusLabel(c.etatCommandeId) }}
+                </td>
+
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                  <ng-container *ngIf="editingTeamId !== c.id; else editActionsTpl">
+                    <button class="text-green-700 hover:underline mr-3" 
+                            *ngIf="c.etatCommandeId === ETAT.EN_ATTENTE"
+                            (click)="managerValidate(c)">Valider</button>
+
+                    <button class="text-red-700 hover:underline mr-3"
+                            *ngIf="c.etatCommandeId === ETAT.EN_ATTENTE"
+                            (click)="managerReject(c)">
+                      Rejeter
+                    </button>
+                    <button class="text-blue-700 hover:underline" 
+                            *ngIf="c.etatCommandeId === ETAT.EN_ATTENTE" 
+                            (click)="startEditTeam(c)">Modifier</button>
+                  </ng-container>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <ng-template #teamLoadingTpl>
+            <div class="py-6 text-center text-gray-500">Chargement…</div>
+          </ng-template>
+        </div>
+
+        <!-- TPL édition (par ligne) -->
+        <ng-template #editArticleTpl>
+          <!-- IMPORTANT : formGroup ici pour utiliser formControlName sans erreur -->
+          <form [formGroup]="teamForm">
+            <select class="w-44 px-2 py-1 border rounded-md" formControlName="article_id">
+              <option [ngValue]="0" disabled>Sélectionner un article</option>
+              <option *ngFor="let a of articles" [ngValue]="a.id">{{ a.nom }}</option>
+            </select>
+          </form>
+        </ng-template>
+
+        <ng-template #editQuantiteTpl>
+          <form [formGroup]="teamForm">
+            <input type="number" min="1" class="w-24 px-2 py-1 border rounded-md"
+                   formControlName="quantite" />
+          </form>
+        </ng-template>
+
+        <ng-template #editActionsTpl>
+          <div class="flex items-center gap-2">
+            <button class="text-green-700 hover:underline" (click)="saveEditTeam()">Enregistrer</button>
+            <button class="text-gray-600 hover:underline" (click)="cancelEditTeam()">Annuler</button>
+          </div>
+        </ng-template>
+
+        <p *ngIf="teamError" class="text-sm text-red-600">{{ teamError }}</p>
+      </section>
+
+      <!-- Section Profil (identique style user) -->
+      <section *ngIf="activeSection === 'profile'" class="space-y-6">
+        <header>
+          <h1 class="text-2xl font-bold text-gray-800">Profil Manager</h1>
+          <p class="text-gray-600">Vos informations et sécurité du compte.</p>
+        </header>
+
+        <div class="bg-white p-4 rounded-lg shadow-md grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <span class="text-sm text-gray-500">Matricule</span>
+            <div class="font-medium text-gray-900">{{ me?.matricule }}</div>
+          </div>
+          <div>
+            <span class="text-sm text-gray-500">Rôle</span>
+            <div class="font-medium text-gray-900">{{ me?.role || '—' }}</div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-semibold text-gray-800 mb-3">Informations personnelles</h2>
+          <form [formGroup]="profileForm" (ngSubmit)="submitProfile()" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Nom</label>
+                <input formControlName="nom" type="text"
+                       class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-green-500" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Prénom</label>
+                <input formControlName="prenom" type="text"
+                       class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-green-500" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Email</label>
+              <input formControlName="email" type="email"
+                     class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-green-500" />
+            </div>
+            <div class="flex items-center gap-3 pt-2">
+              <button type="submit" [disabled]="profileForm.invalid || profileSaving"
+                      class="inline-flex justify-center py-2 px-4 rounded-md text-white bg-green-600 hover:bg-green-700 disabled:opacity-60">
+                {{ profileSaving ? 'Enregistrement…' : 'Sauvegarder' }}
+              </button>
+              <span class="text-sm text-gray-600" *ngIf="profileMsg">{{ profileMsg }}</span>
+            </div>
+          </form>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-semibold text-gray-800 mb-3">Changer le mot de passe</h2>
+          <form [formGroup]="passwordForm" (ngSubmit)="submitPassword()" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Ancien mot de passe</label>
+                <input formControlName="oldPassword" type="password"
+                       class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-green-500" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Nouveau mot de passe</label>
+                <input formControlName="newPassword" type="password"
+                       class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-green-500" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Confirmer</label>
+                <input formControlName="confirmNewPassword" type="password"
+                       class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-green-500" />
+              </div>
+            </div>
+            <div class="flex items-center gap-3 pt-2">
+              <button type="submit" [disabled]="passwordForm.invalid || passwordSaving"
+                      class="inline-flex justify-center py-2 px-4 rounded-md text-white bg-green-600 hover:bg-green-700 disabled:opacity-60">
+                {{ passwordSaving ? 'Changement…' : 'Changer' }}
+              </button>
+              <span class="text-sm" [ngClass]="(passwordMsg && passwordMsg.includes('incorrect')) ? 'text-red-600' : 'text-gray-600'"
+                    *ngIf="passwordMsg">{{ passwordMsg }}</span>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

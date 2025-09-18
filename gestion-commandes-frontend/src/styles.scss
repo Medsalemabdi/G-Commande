@@ -1,0 +1,68 @@
+/* Customize buttons */
+button[mat-raised-button] {
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+/* Customize form fields */
+mat-form-field {
+  .mat-form-field-outline {
+    background-color: #f9fafb !important; /* bg-gray-50 */
+    border-radius: 0.5rem !important; /* rounded-lg */
+    border-width: 1px !important;
+  }
+
+  .mat-form-field-wrapper {
+    padding-bottom: 0 !important;
+  }
+
+  .mat-form-field-infix {
+    padding: 0.5em 0 !important;
+    border-top: 0 !important;
+  }
+
+  .mat-form-field-label {
+    color: #6b7280 !important; /* text-gray-500 */
+  }
+
+  .mat-input-element {
+    color: #1f2937 !important; /* text-gray-800 */
+    padding: 0.5rem 0 !important;
+  }
+}
+
+/* Customize dropdown panels */
+.mat-select-panel {
+  border-radius: 0.5rem !important;
+  margin-top: 0.5rem !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+
+  .mat-option {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.875rem !important; /* text-sm */
+    
+    &.mat-selected:not(.mat-option-multiple) {
+      background-color: #f3f4f6 !important; /* bg-gray-100 */
+      color: #1f2937 !important; /* text-gray-800 */
+    }
+  }
+}
+
+/* Customize delete button */
+button[mat-icon-button] {
+  border-radius: 0.5rem !important;
+  padding: 0.5rem !important;
+  transition: all 0.2s ease !important;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  .mat-icon {
+    font-size: 1.25rem !important;
+    height: 1.25rem !important;
+    width: 1.25rem !important;
+  }
+}

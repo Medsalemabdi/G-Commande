@@ -1,0 +1,144 @@
+<div class="p-4">
+  
+
+  <!-- Formulaire -->
+  <div class="mb-4 flex space-x-2">
+    <!-- Quantité -->
+    <input *ngIf="!editingStock"
+           type="number"
+           [(ngModel)]="newStock.quantite"
+           name="quantite"
+           placeholder="Quantité"
+           class="border rounded px-2 py-1 w-32"
+           required />
+
+    <input *ngIf="editingStock"
+           type="number"
+           [(ngModel)]="editingStock.quantite"
+           name="editQuantite"
+           placeholder="Quantité"
+           class="border rounded px-2 py-1 w-32"
+           required />
+
+    <!-- Sélection d'article -->
+    <select *ngIf="!editingStock"
+            [(ngModel)]="newStock.article_id"
+            name="article_id"
+            class="border rounded px-2 py-1 w-64"
+            required>
+      <option [ngValue]="null" disabled selected>-- Choisir un article --</option>
+      <option *ngFor="let article of articles" [value]="article.id">
+        {{ article.nom }}
+      </option>
+    </select>
+
+    <select *ngIf="editingStock"
+            [(ngModel)]="editingStock.article_id"
+            name="editArticle_id"
+            class="border rounded px-2 py-1 w-64"
+            required>
+      <option [ngValue]="null" disabled>-- Choisir un article --</option>
+      <option *ngFor="let article of articles" [value]="article.id">
+        {{ article.nom }}
+      </option>
+    </select>
+
+    <!-- Boutons -->
+    <button type="submit"
+            (click)="saveStock()"
+            class="bg-green-600 text-white px-4 py-1 rounded">
+      {{ editingStock ? 'Mettre à jour' : 'Ajouter' }}
+    </button>
+    <button *ngIf="editingStock"
+            (click)="cancelEdit()"
+            class="bg-red-600 text-white px-4 py-1 rounded">
+      Annuler
+    </button>
+  </div>
+
+  <!-- Liste -->
+  <table class="w-full border-collapse border border-gray-300">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="border px-4 py-2">ID</th>
+        <th class="border px-4 py-2">Quantité</th>
+        <th class="border px-4 py-2">Article</th>
+        <th class="border px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let stock of stocks">
+        <td class="border px-4 py-2">{{ stock.id }}</td>
+        <td class="border px-4 py-2">{{ stock.quantite }}</td>
+        <td class="border px-4 py-2">{{ getArticleName(stock.article_id) }}</td>
+        <td class="border px-4 py-2 flex space-x-2">
+          <button (click)="editStock(stock)"
+                  class="bg-blue-600 text-white px-3 py-1 rounded">
+            Modifier
+          </button>
+          <button (click)="deleteStock(stock.id!)"
+                  class="bg-red-600 text-white px-3 py-1 rounded">
+            Supprimer
+          </button>
+          <button (click)="openBC(stock)"
+          class="bg-emerald-600 text-white px-3 py-1 rounded">
+            Bon de commande
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Modal Bon de commande -->
+<div *ngIf="bcModalOpen" class="fixed inset-0 z-50 flex items-center justify-center">
+  <div class="absolute inset-0 bg-black/40" (click)="closeBC()"></div>
+
+  <div class="relative bg-white w-full max-w-lg rounded-lg shadow-lg p-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">
+      Bon de commande — {{ bcTarget ? getArticleName(bcTarget.article_id) : '—' }}
+    </h3>
+
+    <div class="grid grid-cols-1 gap-4">
+      <div>
+        <label class="block text-sm text-gray-600">Quantité à commander</label>
+        <input type="number" min="1" [(ngModel)]="bcQty"
+               class="mt-1 w-full border rounded px-3 py-2" />
+      </div>
+
+      <!-- Champs optionnels (tu peux les enlever si tu ne les veux pas) -->
+      <div>
+        <label class="block text-sm text-gray-600">Fournisseur (optionnel)</label>
+        <input type="text" [(ngModel)]="bcSupplier"
+               class="mt-1 w-full border rounded px-3 py-2" placeholder="Nom fournisseur" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm text-gray-600">Prix unitaire (optionnel)</label>
+          <input type="number" min="0" step="0.01" [(ngModel)]="bcUnitPrice"
+                 class="mt-1 w-full border rounded px-3 py-2" placeholder="0.00" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600">Date prévue (optionnel)</label>
+          <input type="date" [(ngModel)]="bcDeliveryDate"
+                 class="mt-1 w-full border rounded px-3 py-2" />
+        </div>
+      </div>
+
+      <div *ngIf="bcUnitPrice && bcQty" class="text-sm text-gray-700">
+        Montant estimatif : <span class="font-semibold">{{ (bcUnitPrice * bcQty) | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <div class="mt-5 flex items-center justify-end gap-3">
+      <button class="py-2 px-4 rounded-md border bg-white hover:bg-gray-50" (click)="closeBC()">Annuler</button>
+      <button class="py-2 px-4 rounded-md text-white bg-emerald-600 hover:bg-emerald-700"
+              [disabled]="!bcQty || bcQty < 1"
+              (click)="generateBC()">
+        Télécharger (PDF)
+      </button>
+    </div>
+  </div>
+</div>
+
+</div>
